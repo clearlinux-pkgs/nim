@@ -1,0 +1,13 @@
+--- /dev/null	2019-05-30 10:53:36.370454422 -0700
++++ nim-0.19.6/build.mk	2019-06-03 10:55:13.844157593 -0700
+@@ -0,0 +1,10 @@
++all:
++	./build.sh --os linux --cpu amd64
++	./bin/nim c koch
++	./koch boot -d:release
++	./koch docs
++	./koch tools -d:release
++install:
++	mkdir -p $(DESTDIR)/usr/bin $(DESTDIR)/usr/lib
++	install bin/nim bin/nimble bin/nimsuggest bin/nimgrep $(DESTDIR)/usr/bin/
++	cp -a ./lib $(DESTDIR)/usr/lib/nim
