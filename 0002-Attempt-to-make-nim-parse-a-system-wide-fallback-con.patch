@@ -1,0 +1,24 @@
+From b31e605a07550f135df31fb84c5563a6c6e9980b Mon Sep 17 00:00:00 2001
+From: Auke Kok <auke-jan.h.kok@intel.com>
+Date: Mon, 18 May 2020 10:30:44 -0700
+Subject: [PATCH] Attempt to make nim parse a system-wide fallback config file.
+
+---
+ compiler/nimconf.nim | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/compiler/nimconf.nim b/compiler/nimconf.nim
+index a470179..6d1ecd2 100644
+--- a/compiler/nimconf.nim
++++ b/compiler/nimconf.nim
+@@ -230,6 +230,7 @@ proc getSystemConfigPath*(conf: ConfigRef; filename: RelativeFile): AbsoluteFile
+   when defined(unix):
+     if not fileExists(result): result = p / RelativeDir"etc/nim" / filename
+     if not fileExists(result): result = AbsoluteDir"/etc/nim" / filename
++    if not fileExists(result): result = AbsoluteDir"/usr/share/defaults/nim" / filename
+ 
+ proc loadConfigs*(cfg: RelativeFile; cache: IdentCache; conf: ConfigRef) =
+   setDefaultLibpath(conf)
+-- 
+2.26.2
+

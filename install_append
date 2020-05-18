@@ -1,0 +1,2 @@
+mkdir -p %{buildroot}/usr/share/defaults/nim
+install config/nim.cfg %{buildroot}/usr/share/defaults/nim/

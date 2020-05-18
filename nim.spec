@@ -4,15 +4,17 @@
 #
 Name     : nim
 Version  : 1.0.0
-Release  : 2
+Release  : 3
 URL      : https://nim-lang.org/download/nim-1.0.0.tar.xz
 Source0  : https://nim-lang.org/download/nim-1.0.0.tar.xz
 Summary  : No detailed summary available
 Group    : Development/Tools
 License  : BSD-2-Clause BSD-3-Clause MIT
 Requires: nim-bin = %{version}-%{release}
+Requires: nim-data = %{version}-%{release}
 Requires: nim-license = %{version}-%{release}
 Patch1: 0001-add-build.mk.patch
+Patch2: 0002-Attempt-to-make-nim-parse-a-system-wide-fallback-con.patch
 
 %description
 # Linenoise
@@ -22,10 +24,19 @@ MongoDB, and Android.
 %package bin
 Summary: bin components for the nim package.
 Group: Binaries
+Requires: nim-data = %{version}-%{release}
 Requires: nim-license = %{version}-%{release}
 
 %description bin
 bin components for the nim package.
+
+
+%package data
+Summary: data components for the nim package.
+Group: Data
+
+%description data
+data components for the nim package.
 
 
 %package license
@@ -38,33 +49,39 @@ license components for the nim package.
 
 %prep
 %setup -q -n nim-1.0.0
+cd %{_builddir}/nim-1.0.0
 %patch1 -p1
+%patch2 -p1
 
 %build
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1570214402
+export SOURCE_DATE_EPOCH=1589824900
 export GCC_IGNORE_WERROR=1
 export AR=gcc-ar
 export RANLIB=gcc-ranlib
 export NM=gcc-nm
 export CFLAGS="$CFLAGS -O3 -ffat-lto-objects -flto=4 "
-export FCFLAGS="$CFLAGS -O3 -ffat-lto-objects -flto=4 "
-export FFLAGS="$CFLAGS -O3 -ffat-lto-objects -flto=4 "
+export FCFLAGS="$FFLAGS -O3 -ffat-lto-objects -flto=4 "
+export FFLAGS="$FFLAGS -O3 -ffat-lto-objects -flto=4 "
 export CXXFLAGS="$CXXFLAGS -O3 -ffat-lto-objects -flto=4 "
 make  %{?_smp_mflags}  -f build.mk
 
 
 %install
-export SOURCE_DATE_EPOCH=1570214402
+export SOURCE_DATE_EPOCH=1589824900
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/nim
-cp copying.txt %{buildroot}/usr/share/package-licenses/nim/copying.txt
-cp dist/nimble/license.txt %{buildroot}/usr/share/package-licenses/nim/dist_nimble_license.txt
-cp lib/wrappers/linenoise/LICENSE.txt %{buildroot}/usr/share/package-licenses/nim/lib_wrappers_linenoise_LICENSE.txt
+cp %{_builddir}/nim-1.0.0/copying.txt %{buildroot}/usr/share/package-licenses/nim/1e01035cf0b9fd00719676ec8841b53e7286660c
+cp %{_builddir}/nim-1.0.0/dist/nimble/license.txt %{buildroot}/usr/share/package-licenses/nim/22ff85e051d41d7e1171a0c0080bb51df080f326
+cp %{_builddir}/nim-1.0.0/lib/wrappers/linenoise/LICENSE.txt %{buildroot}/usr/share/package-licenses/nim/3bd655bcdbe6f4f14e9da385f1953c50dd89ea8e
 make -f build.mk install DESTDIR=%{buildroot}
+## install_append content
+mkdir -p %{buildroot}/usr/share/defaults/nim
+install config/nim.cfg %{buildroot}/usr/share/defaults/nim/
+## install_append end
 
 %files
 %defattr(-,root,root,-)
@@ -333,8 +350,12 @@ make -f build.mk install DESTDIR=%{buildroot}
 /usr/bin/nimgrep
 /usr/bin/nimsuggest
 
+%files data
+%defattr(-,root,root,-)
+/usr/share/defaults/nim/nim.cfg
+
 %files license
 %defattr(0644,root,root,0755)
-/usr/share/package-licenses/nim/copying.txt
-/usr/share/package-licenses/nim/dist_nimble_license.txt
-/usr/share/package-licenses/nim/lib_wrappers_linenoise_LICENSE.txt
+/usr/share/package-licenses/nim/1e01035cf0b9fd00719676ec8841b53e7286660c
+/usr/share/package-licenses/nim/22ff85e051d41d7e1171a0c0080bb51df080f326
+/usr/share/package-licenses/nim/3bd655bcdbe6f4f14e9da385f1953c50dd89ea8e
