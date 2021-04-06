@@ -1,11 +1,28 @@
---- /dev/null	2019-05-30 10:53:36.370454422 -0700
-+++ nim-0.19.6/build.mk	2019-06-03 10:55:13.844157593 -0700
-@@ -0,0 +1,10 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Auke Kok <auke-jan.h.kok@intel.com>
+Date: Mon, 3 Jun 2019 12:47:47 -0700
+Subject: [PATCH] add build.mk
+
+2021-04-05: Removed `./koch docs` line, since it fails, and it's
+            documented as an internal command. Also set -d:release for
+            the initial bootstrap command, similar to the Arch package.
+
+Signed-off-by: Patrick McCarty <patrick.mccarty@intel.com>
+---
+ build.mk | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+ create mode 100644 build.mk
+
+diff --git a/build.mk b/build.mk
+new file mode 100644
+index 0000000..269c49d
+--- /dev/null
++++ b/build.mk
+@@ -0,0 +1,9 @@
 +all:
 +	./build.sh --os linux --cpu amd64
-+	./bin/nim c koch
++	./bin/nim c -d:release koch
 +	./koch boot -d:release
-+	./koch docs
 +	./koch tools -d:release
 +install:
 +	mkdir -p $(DESTDIR)/usr/bin $(DESTDIR)/usr/lib
